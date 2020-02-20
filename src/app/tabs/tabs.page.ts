@@ -17,7 +17,6 @@ export class TabsPage implements OnInit {
     setTimeout(() => {
       this.tabs.select('feed')
     }, 500);
-
   }
 
 }
