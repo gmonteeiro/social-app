@@ -1,9 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth'
-import { auth } from 'firebase/app'
+import { auth} from 'firebase/app'
 import { Router } from '@angular/router'
 
+import { AngularFirestore } from '@angular/fire/firestore'
+
 import {AlertController} from '@ionic/angular'
+import { UserService } from '../user.service';
 
 
 @Component({
@@ -16,14 +19,25 @@ export class RegisterPage implements OnInit {
 	username: string = ""
 	password: string = ""
 	cpassword: string = ""
+	AlertController: any;
 
   	constructor(
 		public afAuth: AngularFireAuth,
-		public alert: AlertController,
-		public router: Router
+		public alertController: AlertController,
+		public router: Router,
+		public user: UserService,
+		public afstore: AngularFirestore,
 	) { }
 
 	ngOnInit() {
+	}
+
+	async presentAlert(title: string, content: string){
+		const alert = await this.alertController.create({
+			header: title,
+			message: content,
+			buttons: ['Ok']
+		})
 	}
 
 	async register() {
@@ -35,9 +49,19 @@ export class RegisterPage implements OnInit {
 
 		try{
 			const res = await this.afAuth.auth.createUserWithEmailAndPassword(username + "@social-app.com", password)
-			console.log(res)
-			this.showAlert("Success!", "Welcome aboard!")
+			
+			this.afstore.doc(`users/${res.user.uid}`).set({
+				username
+			})
+
+			this.user.setUser({
+				username,
+				uid: res.user.uid
+			})
+
+			this.presentAlert('Success', 'You are registered!')
 			this.router.navigate(['/tabs'])
+
 		}catch(err){
 			this.showAlert("Error!", err.message)
 			console.dir(err)
@@ -45,7 +69,7 @@ export class RegisterPage implements OnInit {
 	}
 
 	async showAlert(header: string, message: string){
-		const alert = await this.alert.create({
+		const alert = await this.alertController.create({
 			header,
 			message,
 			buttons: ["Ok"]
