@@ -3,6 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { UserService } from '../user.service';
 import { firestore } from 'firebase/app';
+import { AlertController } from '@ionic/angular';
+import { Route } from '@angular/compiler/src/core';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -15,18 +18,24 @@ export class UploaderPage implements OnInit {
   imageURL: string
   desc: string
 
+  busy: boolean = false
+
   @ViewChild('fileButton', {static: false}) fileButton
 
   constructor(
     public http: HttpClient,
     public afstore: AngularFirestore,
-    public user: UserService
+    public user: UserService,
+    private alertController: AlertController,
+    private router: Router
   ) { }
 
   ngOnInit() {
   }
 
-  createPost(){
+  async createPost(){
+    this.busy = true
+
     const image = this.imageURL
     const desc = this.desc
 
@@ -40,6 +49,20 @@ export class UploaderPage implements OnInit {
       likes: []
     })
 
+    this.busy = false
+    this.imageURL = ""
+    this.desc = ""
+
+    const alert = await this.alertController.create({
+      header: 'Done',
+      message: 'Your post was created!',
+      buttons:['Cool!']
+    })
+
+    await alert.present()
+
+    this.router.navigate(['/tabs/feed'])
+
   }
 
   uploadFire(){
@@ -47,6 +70,9 @@ export class UploaderPage implements OnInit {
   }
 
   fileChanged(event){
+    
+    this.busy = true
+
     const files = event.target.files
     console.log(files)
 
@@ -59,6 +85,7 @@ export class UploaderPage implements OnInit {
     .subscribe(event => {
       console.log(event)
       this.imageURL = event.file
+      this.busy = false
     })
   }
 

@@ -16,6 +16,7 @@ export class ProfilePage implements OnInit {
   constructor(private afs: AngularFirestore, private user: UserService, private router: Router) { 
     const posts = afs.doc(`users/${user.getUID()}`)
     this.userPosts = posts.valueChanges()
+    console.log(this.userPosts)
   }
 
   goTo(postID: string){

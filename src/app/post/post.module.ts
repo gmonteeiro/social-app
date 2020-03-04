@@ -7,13 +7,15 @@ import { IonicModule } from '@ionic/angular';
 import { PostPageRoutingModule } from './post-routing.module';
 
 import { PostPage } from './post.page';
+import { ShareModule } from 'src/share.module';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    PostPageRoutingModule
+    PostPageRoutingModule,
+    ShareModule
   ],
   declarations: [PostPage]
 })

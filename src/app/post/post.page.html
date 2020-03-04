@@ -5,7 +5,10 @@
 </ion-header>
 
 <ion-content>
-  <ion-card *ngIf="post | async as postData">
+
+  <app-loading *ngIf="!post"></app-loading>
+
+  <ion-card *ngIf="post as postData">
     <ion-img src="https://ucarecdn.com/{{postID}}/"></ion-img>
     <ion-card-content>
       <p>{{postData.desc}}</p>
